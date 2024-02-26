@@ -4,13 +4,17 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-  Pressable,
+  TextInput,
 } from "react-native";
 import {theme} from "./colors";
+import {useState} from "react";
 
 export default function App() {
+  const [working, setWorking] = useState(true);
+  const [text, setText] = useState("");
+  const travel = () => setWorking(false);
+  const work = () => setWorking(true);
+  const onChangeText = (payload) => setText(payload);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -20,13 +24,39 @@ export default function App() {
         {/* TouchableWithoutFeedback은 touch시 아무 animation 변경이 없음 */}
         {/* Pressable은 TouchableWithoutFeedback과 유사하지만 더 많은 기능을 가짐 
           Hitslop을 사용하여 터치인식 범위를 지정할 수 있음*/}
-        <TouchableOpacity>
-          <Text style={styles.btnText}>Work</Text>
+        <TouchableOpacity onPress={work}>
+          <Text
+            style={{...styles.btnText, color: working ? "white" : theme.grey}}
+          >
+            Work
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.btnText}>Travel</Text>
+        <TouchableOpacity onPress={travel}>
+          <Text
+            style={{...styles.btnText, color: !working ? "white" : theme.grey}}
+          >
+            Travel
+          </Text>
         </TouchableOpacity>
       </View>
+
+      <TextInput
+        onChangeText={onChangeText}
+        value={text}
+        style={styles.input}
+        placeholder={working ? "Add a To Do" : "Where do you want to go"}
+
+        // placeholderTextColor="red"
+        //여러 줄을 쓸 수 있음
+        // multiline
+        //비밀번호 입력시 별표 처리
+        // secureTextEntry
+        //return key type을 바꿀 수 있음 ex) 전송, 완료
+        // returnKeyType="done"
+        // return key Label은 label 내용을 바꿀 수 있음
+        //keyboard default type을 지정할 수 있음 ex) 전화번호 입력, 이메일 입력, 주소 입력
+        // keyboardType="web-search"
+      />
     </View>
   );
 }
@@ -45,6 +75,13 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 38,
     fontWeight: "600",
-    color: "white",
+  },
+  input: {
+    backgroundColor: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    marginTop: 20,
+    fontSize: 18,
   },
 });
