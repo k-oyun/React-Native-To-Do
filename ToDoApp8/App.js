@@ -12,9 +12,23 @@ import {useState} from "react";
 export default function App() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
+  //hashmap : {}
+  const [toDos, setToDos] = useState({});
+
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
   const onChangeText = (payload) => setText(payload);
+  const addToDo = () => {
+    if (text === "") {
+      return;
+    }
+    //Object.assign = object과 object을 합쳐줌
+    const newToDos = Object.assign({}, toDos, {
+      [Date.now()]: {text, work: working},
+    });
+    //save to do
+    setText("");
+  };
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -42,6 +56,8 @@ export default function App() {
 
       <TextInput
         onChangeText={onChangeText}
+        onSubmitEditing={addToDo}
+        returnKeyType="done"
         value={text}
         style={styles.input}
         placeholder={working ? "Add a To Do" : "Where do you want to go"}
