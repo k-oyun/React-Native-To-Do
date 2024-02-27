@@ -8,30 +8,48 @@ import {
   ScrollView,
 } from "react-native";
 import {theme} from "./colors";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const STORAGE_KEY = "@toDos";
 
 export default function App() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
   //hashmap : {}
   const [toDos, setToDos] = useState({});
+  useEffect(() => {
+    loadToDos();
+  }, []);
 
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
   const onChangeText = (payload) => setText(payload);
-  const addToDo = () => {
+  //로컬에 toDo를 저장하도록
+  //로컬에 저장함!
+  const saveToDos = async (toSave) => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  };
+
+  //로컬에 저장된 것을 불러옴!
+  const loadToDos = async () => {
+    const s = await AsyncStorage.getItem(STORAGE_KEY);
+    //string -> js object으로 만들어줌
+    setToDos(JSON.parse(s));
+  };
+
+  const addToDo = async () => {
+    //text가 비어있으면 아무것도 하지않음
     if (text === "") {
       return;
     }
-    //Object.assign = object과 object을 합쳐줌
-    // const newToDos = Object.assign({}, toDos, {
-    //   [Date.now()]: {text, work: working},
-    // });
 
-    //object를 새로 만듬
-    const newToDos = {...toDos, [Date.now()]: {text, work: working}};
+    //Text가 비어있지 않으면 object를 새로 만듬
+    const newToDos = {...toDos, [Date.now()]: {text, working}};
     //save to do
     setToDos(newToDos);
+    await saveToDos(newToDos);
+    //text 초기화
     setText("");
   };
   return (
@@ -80,11 +98,14 @@ export default function App() {
       />
       <ScrollView>
         {/* key를 통해 toDo를 렌더링 */}
-        {Object.keys(toDos).map((key) => (
-          <View style={styles.toDo} key={key}>
-            <Text style={styles.toDoText}>{toDos[key].text}</Text>
-          </View>
-        ))}
+        {Object.keys(toDos).map((key) =>
+          //각각의 카테고리의 맞는 todo만 출력되도록
+          toDos[key].working === working ? (
+            <View style={styles.toDo} key={key}>
+              <Text style={styles.toDoText}>{toDos[key].text}</Text>
+            </View>
+          ) : null
+        )}
       </ScrollView>
     </View>
   );
