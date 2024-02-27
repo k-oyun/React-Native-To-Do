@@ -57,6 +57,7 @@ export default function App() {
   //key에 맞는 toDo삭제
   const deleteToDo = (key) => {
     //삭제 전 재차 묻기
+    //Confirmaion message
     //https://reactnative.dev/docs/alert
     Alert.alert("Delete To Do?", "Are you sure?", [
       {text: "Cancle"},
