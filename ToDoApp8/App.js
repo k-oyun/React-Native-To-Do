@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert,
   TouchableOpacity,
   TextInput,
   ScrollView,
@@ -10,6 +11,7 @@ import {
 import {theme} from "./colors";
 import {useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Fontisto} from "@expo/vector-icons";
 
 const STORAGE_KEY = "@toDos";
 
@@ -51,6 +53,27 @@ export default function App() {
     await saveToDos(newToDos);
     //text 초기화
     setText("");
+  };
+  //key에 맞는 toDo삭제
+  const deleteToDo = (key) => {
+    //삭제 전 재차 묻기
+    //https://reactnative.dev/docs/alert
+    Alert.alert("Delete To Do?", "Are you sure?", [
+      {text: "Cancle"},
+      {
+        text: "I'm sure",
+        style: "destructive",
+        onPress: () => {
+          const newToDos = {...toDos};
+          //key에 맞는 object 삭제
+          delete newToDos[key];
+          setToDos(newToDos);
+          saveToDos(newToDos);
+        },
+      },
+    ]);
+    return;
+    //...toDos는 새로운 옵젝을 불러와 삭제 후 toDo 업데이트하고 로컬에 저장
   };
   return (
     <View style={styles.container}>
@@ -103,6 +126,11 @@ export default function App() {
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
+              <TouchableOpacity onPress={() => deleteToDo(key)}>
+                <Text>
+                  <Fontisto name="trash" size={18} color={theme.grey} />
+                </Text>
+              </TouchableOpacity>
             </View>
           ) : null
         )}
@@ -135,11 +163,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   toDo: {
-    backgroundColor: theme.grey,
+    backgroundColor: theme.toDoBg,
     marginBottom: 10,
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   toDoText: {
     color: "white",
