@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from "react-native";
 import {theme} from "./colors";
 import {useState} from "react";
@@ -23,10 +24,14 @@ export default function App() {
       return;
     }
     //Object.assign = object과 object을 합쳐줌
-    const newToDos = Object.assign({}, toDos, {
-      [Date.now()]: {text, work: working},
-    });
+    // const newToDos = Object.assign({}, toDos, {
+    //   [Date.now()]: {text, work: working},
+    // });
+
+    //object를 새로 만듬
+    const newToDos = {...toDos, [Date.now()]: {text, work: working}};
     //save to do
+    setToDos(newToDos);
     setText("");
   };
   return (
@@ -73,6 +78,14 @@ export default function App() {
         //keyboard default type을 지정할 수 있음 ex) 전화번호 입력, 이메일 입력, 주소 입력
         // keyboardType="web-search"
       />
+      <ScrollView>
+        {/* key를 통해 toDo를 렌더링 */}
+        {Object.keys(toDos).map((key) => (
+          <View style={styles.toDo} key={key}>
+            <Text style={styles.toDoText}>{toDos[key].text}</Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -97,7 +110,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    marginTop: 20,
+    marginVertical: 20,
     fontSize: 18,
+  },
+  toDo: {
+    backgroundColor: theme.grey,
+    marginBottom: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+  },
+  toDoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
