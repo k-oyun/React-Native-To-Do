@@ -21,7 +21,7 @@ export default function App() {
   //hashmap : {}
   const [toDos, setToDos] = useState({});
   useEffect(() => {
-    loadToDos();
+    null && loadToDos();
   }, []);
 
   const travel = () => setWorking(false);
@@ -123,7 +123,7 @@ export default function App() {
       <ScrollView>
         {/* key를 통해 toDo를 렌더링 */}
         {Object.keys(toDos).map((key) =>
-          //각각의 카테고리의 맞는 todo만 출력되도록
+          // 각각의 카테고리의 맞는 todo만 출력되도록
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
